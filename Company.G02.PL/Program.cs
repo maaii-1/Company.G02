@@ -13,10 +13,10 @@ namespace Company.G02.PL
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();         // Register Built-in MVC Services
-            builder.Services.AddScoped<DepartmentRepositry>();  // Allow DI For DepartmentRepositry
+            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepositry>();  // Allow DI For DepartmentRepositry
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {
-                options.UseSqlServer("Server = .; Database = CompanyG02; Trusted_Connection = True; TrustServerCertificate = True")
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
                 });   // Allow DI For CompanyDbContext
 
             var app = builder.Build();
