@@ -1,4 +1,4 @@
-﻿using Company.G02.BLL.Repositories;
+﻿using Company.G02.BLL.Interfaces;
 using Company.G02.DAL.Models;
 using Company.G02.PL.Dtos;
 using Microsoft.AspNetCore.Mvc;
