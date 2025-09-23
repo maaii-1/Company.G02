@@ -2,6 +2,7 @@
 using Company.G02.DAL.Models;
 using Company.G02.PL.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 
 namespace Company.G02.PL.Controllers
 {
@@ -45,6 +46,19 @@ namespace Company.G02.PL.Controllers
                 }
             }
             return View(model);
+        }
+
+
+
+        [HttpGet]
+        public IActionResult Details(int? id)
+        {
+            if (id is null) return BadRequest("Invalid Id");
+
+            var department = _departmentRepositry.GetById(id.Value);
+            if (department is null) return NotFound(new { StatusCode = 404, message = $"Department With Id: {id} Is Not Found!" });
+            
+            return View(department);
         }
     }
 }
