@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Company.G02.BLL.Repositories
+namespace Company.G02.BLL.Interfaces
 {
     public interface IDepartmentRepository
     {
