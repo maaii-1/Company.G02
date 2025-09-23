@@ -60,5 +60,64 @@ namespace Company.G02.PL.Controllers
             
             return View(department);
         }
+
+        [HttpGet]
+        public IActionResult Edit(int? id)
+        {
+            if (id is null) return BadRequest("Invalid Id");
+
+            var department = _departmentRepositry.GetById(id.Value);
+            if (department is null) return NotFound(new { StatusCode = 404, message = $"Department With Id: {id} Is Not Found!" });
+
+            return View(department);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit([FromRoute] int id, Department department)
+        {
+            if (ModelState.IsValid)
+            {
+                if (id == department.Id)
+                {
+                    var count = _departmentRepositry.Update(department);
+                    if (count > 0)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            return View(department);
+        }
+
+        #region Update Dto
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult Edit([FromRoute] int id, UpdateDepartmentDto model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var department = new Department()
+        //        {
+        //            Id = id,
+        //            Name = model.Name,
+        //            Code = model.Code,
+        //            CreateAt = model.CreateAt
+        //        };
+        //        var count = _departmentRepositry.Update(department);
+        //        if (count > 0)
+        //        {
+        //            return RedirectToAction(nameof(Index));
+        //        }
+
+        //    }
+        //    return View(model);
+        //} 
+        #endregion
     }
-}
+}  
