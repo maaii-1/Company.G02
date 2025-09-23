@@ -119,5 +119,41 @@ namespace Company.G02.PL.Controllers
         //    return View(model);
         //} 
         #endregion
+
+
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            if (id is null) return BadRequest("Invalid Id");
+
+            var department = _departmentRepositry.GetById(id.Value);
+            if (department is null) return NotFound(new { StatusCode = 404, message = $"Department With Id: {id} Is Not Found!" });
+
+            return View(department);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete([FromRoute] int id, Department department)
+        {
+            if (ModelState.IsValid)
+            {
+                if (id == department.Id)
+                {
+                    var count = _departmentRepositry.Delete(department);
+                    if (count > 0)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            return View(department);
+        }
+
     }
 }  
