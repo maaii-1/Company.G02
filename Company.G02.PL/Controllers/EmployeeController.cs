@@ -74,30 +74,54 @@ namespace Company.G02.PL.Controllers
         [HttpGet]
         public IActionResult Edit(int? id)
         {
-            return Details(id, "Edit");
+            if (id is null) return BadRequest("Invalid Id");
+            var employee = _employeeRepository.GetById(id.Value);
+            if (employee is null) return NotFound(new { StatusCode = 404, message = $"Employee with Id {id} does not exist. " });
+            var employeeDto = new CreateEmployeeDto()
+            {
+                
+                Name = employee.Name,
+                Age = employee.Age,
+                Email = employee.Email,
+                Phone = employee.Phone,
+                Address = employee.Address,
+                Salary = employee.Salary,
+                CreateAt = employee.CreateAt,
+                HiringDate = employee.HiringDate,
+                IsActive = employee.IsActive,
+                IsDeleted = employee.IsDeleted
+            };
+            return View(employeeDto);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int id, Employee employee)
+        public IActionResult Edit([FromRoute] int id, CreateEmployeeDto empDto)
         {
             if (ModelState.IsValid)
             {
-                if (id == employee.Id)
+                var employee = new Employee()
                 {
-                    var count = _employeeRepository.Update(employee);
-                    if (count > 0)
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
-                }
-                else
+                    Id = id,
+                    Name = empDto.Name,
+                    Age = empDto.Age,
+                    Email = empDto.Email,
+                    Phone = empDto.Phone,
+                    Address = empDto.Address,
+                    Salary = empDto.Salary,
+                    CreateAt = empDto.CreateAt,
+                    HiringDate = empDto.HiringDate,
+                    IsActive = empDto.IsActive,
+                    IsDeleted = empDto.IsDeleted
+                };
+                var count = _employeeRepository.Update(employee);
+                if(count > 0)
                 {
-                    return BadRequest();
+                    return RedirectToAction(nameof(Index));
                 }
             }
-            return View(employee);
+            return View(empDto);
         }
 
 
