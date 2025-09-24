@@ -9,45 +9,52 @@ using System.Threading.Tasks;
 
 namespace Company.G02.BLL.Repositories
 {
-    public class DepartmentRepositry : IDepartmentRepository
+    public class DepartmentRepositry : GenericRepository<Department>, IDepartmentRepository
     {
-        private readonly CompanyDbContext _context;
+        #region MyRegion
+        //private readonly CompanyDbContext _context;
 
-        // Ask CLR Create Object From CompanyDbContext
-        public DepartmentRepositry(CompanyDbContext context)
+        //// Ask CLR Create Object From CompanyDbContext
+        //public DepartmentRepositry(CompanyDbContext context)
+        //{
+        //    _context = context;
+        //}
+        //public IEnumerable<Department> GetAll()
+        //{
+        //    return _context.Departments.ToList();
+        //}
+
+
+        //public Department? GetById(int id)
+        //{
+        //    return _context.Departments.Find(id);
+        //}
+
+
+        //public int Add(Department department)
+        //{
+        //    _context.Departments.Add(department);
+        //    return _context.SaveChanges();
+        //}
+
+
+        //public int Update(Department department)
+        //{
+        //    _context.Departments.Update(department);
+        //    return _context.SaveChanges();
+        //}
+
+
+        //public int Delete(Department department)
+        //{
+        //    _context.Departments.Remove(department);
+        //    return _context.SaveChanges();
+        //} 
+        #endregion
+
+        public DepartmentRepositry(CompanyDbContext context) : base(context)   // Ask CLR To Create Object From CompanyDbContext
         {
-            _context = context;
-        }
-        public IEnumerable<Department> GetAll()
-        {
-            return _context.Departments.ToList();
-        }
-
-
-        public Department? GetById(int id)
-        {
-            return _context.Departments.Find(id);
-        }
-
-
-        public int Add(Department department)
-        {
-            _context.Departments.Add(department);
-            return _context.SaveChanges();
-        }
-
-
-        public int Update(Department department)
-        {
-            _context.Departments.Update(department);
-            return _context.SaveChanges();
-        }
-
-
-        public int Delete(Department department)
-        {
-            _context.Departments.Remove(department);
-            return _context.SaveChanges();
+            
         }
 
     }

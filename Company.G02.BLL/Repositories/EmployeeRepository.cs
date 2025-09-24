@@ -9,44 +9,49 @@ using System.Threading.Tasks;
 
 namespace Company.G02.BLL.Repositories
 {
-    internal class EmployeeRepository : IEmployeeRepository
+    internal class EmployeeRepository : GenericRepository<Employee>, IEmployeeRepository
     {
-        private readonly CompanyDbContext _context;
+        #region -
+        //private readonly CompanyDbContext _context;
 
-        public EmployeeRepository(CompanyDbContext context)
+        //public EmployeeRepository(CompanyDbContext context)
+        //{
+        //    _context = context;
+        //}
+        //public IEnumerable<Employee> GetAll()
+        //{
+        //    return _context.Employees.ToList();
+        //}
+
+
+        //public Employee? GetById(int id)
+        //{
+        //    return _context.Employees.Find(id);
+        //}
+
+
+        //public int Add(Employee employee)
+        //{
+        //    _context.Employees.Add(employee);
+        //    return _context.SaveChanges();
+        //}
+
+
+        //public int Update(Employee employee)
+        //{
+        //    _context.Employees.Update(employee);
+        //    return _context.SaveChanges();
+        //}
+
+
+        //public int Delete(Employee employee)
+        //{
+        //    _context.Employees.Remove(employee);
+        //    return _context.SaveChanges();
+        //} 
+        #endregion
+        public EmployeeRepository(CompanyDbContext context) : base(context)
         {
-            _context = context;
-        }
-        public IEnumerable<Employee> GetAll()
-        {
-            return _context.Employees.ToList();
-        }
-
-
-        public Employee? GetById(int id)
-        {
-            return _context.Employees.Find(id);
-        }
-
-
-        public int Add(Employee employee)
-        {
-            _context.Employees.Add(employee);
-            return _context.SaveChanges();
-        }
-
-
-        public int Update(Employee employee)
-        {
-            _context.Employees.Update(employee);
-            return _context.SaveChanges();
-        }
-
-
-        public int Delete(Employee employee)
-        {
-            _context.Employees.Remove(employee);
-            return _context.SaveChanges();
         }
     }
 }
