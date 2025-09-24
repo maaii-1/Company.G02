@@ -8,6 +8,7 @@ namespace Company.G02.PL.Dtos
         [Required(ErrorMessage = "Name Is Required!!")]
         public string Name { get; set; }
 
+        [Required(ErrorMessage = "Age Is Required!!")]
         [Range(22,60, ErrorMessage = "Age Must Be Between 22 and 60")]
         public int? Age { get; set; }
 
