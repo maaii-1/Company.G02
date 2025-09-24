@@ -1,4 +1,5 @@
 ﻿using Company.G02.BLL.Interfaces;
+using Company.G02.BLL.Repositories;
 using Company.G02.DAL.Models;
 using Company.G02.PL.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -64,35 +65,41 @@ namespace Company.G02.PL.Controllers
         [HttpGet]
         public IActionResult Edit(int? id)
         {
-            //if (id is null) return BadRequest("Invalid Id");
+            if (id is null) return BadRequest("Invalid Id");
 
-            //var department = _departmentRepositry.GetById(id.Value);
-            //if (department is null) return NotFound(new { StatusCode = 404, message = $"Department With Id: {id} Is Not Found!" });
+            var department = _departmentRepositry.GetById(id.Value);
+            if (department is null) return NotFound(new { StatusCode = 404, message = $"Department With Id: {id} Is Not Found!" });
 
-            return Details(id, "Edit");
+            var DeotDto = new CreateDepartmentDto()
+            {
+                Code = department.Code,
+                Name = department.Name,
+                CreateAt = department.CreateAt
+            };
+
+            return View(DeotDto);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int id, Department department)
+        public IActionResult Edit([FromRoute] int id, CreateDepartmentDto dept)
         {
             if (ModelState.IsValid)
             {
-                if (id == department.Id)
+                var department = new Department()
                 {
-                    var count = _departmentRepositry.Update(department);
-                    if (count > 0)
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
-                }
-                else
+                    Code = dept.Code,
+                    Name = dept.Name,
+                    CreateAt = dept.CreateAt
+                };
+                var count = _departmentRepositry.Update(department);
+                if (count > 0)
                 {
-                    return BadRequest();
+                    return RedirectToAction(nameof(Index));
                 }
             }
-            return View(department);
+            return View(dept);
         }
 
         #region Update Dto
