@@ -15,6 +15,7 @@ namespace Company.G02.PL
             // Add services to the container.
             builder.Services.AddControllersWithViews();         // Register Built-in MVC Services
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepositry>();  // Allow DI For DepartmentRepositry
+            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();    // Allow DI For DepartmentRepositry
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
