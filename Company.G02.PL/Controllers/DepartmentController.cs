@@ -89,6 +89,7 @@ namespace Company.G02.PL.Controllers
             {
                 var department = new Department()
                 {
+                    Id = id,
                     Code = dept.Code,
                     Name = dept.Name,
                     CreateAt = dept.CreateAt
