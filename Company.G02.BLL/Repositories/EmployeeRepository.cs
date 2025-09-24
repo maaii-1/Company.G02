@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Company.G02.BLL.Repositories
 {
-    internal class EmployeeRepository : GenericRepository<Employee>, IEmployeeRepository
+    public class EmployeeRepository : GenericRepository<Employee>, IEmployeeRepository
     {
         #region -
         //private readonly CompanyDbContext _context;
