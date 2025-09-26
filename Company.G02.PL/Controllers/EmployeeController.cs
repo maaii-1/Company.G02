@@ -9,10 +9,12 @@ namespace Company.G02.PL.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IDepartmentRepository _departmentRepository;
 
-        public EmployeeController(IEmployeeRepository employeeRepository)
+        public EmployeeController(IEmployeeRepository employeeRepository, IDepartmentRepository departmentRepository)
         {
             _employeeRepository = employeeRepository;
+            _departmentRepository = departmentRepository;
         }
 
 
@@ -37,6 +39,8 @@ namespace Company.G02.PL.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            var departments = _departmentRepository.GetAll();
+            ViewData["departments"] = departments;
             return View();
         }
 
@@ -57,7 +61,8 @@ namespace Company.G02.PL.Controllers
                  CreateAt = emp.CreateAt,
                  HiringDate = emp.HiringDate,
                  IsActive = emp.IsActive,
-                 IsDeleted = emp.IsDeleted
+                 IsDeleted = emp.IsDeleted,
+                 WorkForId = emp.WorkForId,
                 };
 
                 var count = _employeeRepository.Add(employee);
@@ -86,6 +91,9 @@ namespace Company.G02.PL.Controllers
         [HttpGet]
         public IActionResult Edit(int? id)
         {
+            var departments = _departmentRepository.GetAll();
+            ViewData["departments"] = departments;
+
             if (id is null) return BadRequest("Invalid Id");
             var employee = _employeeRepository.GetById(id.Value);
             if (employee is null) return NotFound(new { StatusCode = 404, message = $"Employee with Id {id} does not exist. " });
@@ -101,7 +109,8 @@ namespace Company.G02.PL.Controllers
                 CreateAt = employee.CreateAt,
                 HiringDate = employee.HiringDate,
                 IsActive = employee.IsActive,
-                IsDeleted = employee.IsDeleted
+                IsDeleted = employee.IsDeleted,
+                
             };
             return View(employeeDto);
         }
@@ -125,7 +134,8 @@ namespace Company.G02.PL.Controllers
                     CreateAt = empDto.CreateAt,
                     HiringDate = empDto.HiringDate,
                     IsActive = empDto.IsActive,
-                    IsDeleted = empDto.IsDeleted
+                    IsDeleted = empDto.IsDeleted,
+                    WorkForId = empDto.WorkForId,
                 };
                 var count = _employeeRepository.Update(employee);
                 if(count > 0)
