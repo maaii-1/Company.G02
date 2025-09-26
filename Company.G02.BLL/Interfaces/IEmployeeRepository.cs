@@ -9,10 +9,15 @@ namespace Company.G02.BLL.Interfaces
 {
     public interface IEmployeeRepository : IGenericRepository<Employee>
     {
+
+        public List<Employee> GetByName(string name);
+
+        #region .
         //IEnumerable<Employee> GetAll();
         //Employee? GetById(int id);
         //int Add(Employee department);
         //int Update(Employee department);
-        //int Delete(Employee department);
+        //int Delete(Employee department); 
+        #endregion
     }
 }

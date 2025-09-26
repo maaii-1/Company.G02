@@ -31,7 +31,21 @@
 } *@
 
 
-<a asp-action="Create" class="btn btn-primary">Create Employee</a>
+<form class="mb-3">
+    <div class="container">
+       <div class="row">
+            <div class="col-6">
+                <input id="SearchInput" placeholder="Search Employee" name="SearchInput" class="form-control" />
+            </div>
+            <div class="col-6">
+                <input type="submit" class="btn btn-success" value="Search" />
+            </div>
+       </div>
+    </div>
+</form>
+
+<br />
+<a asp-action="Create" class="btn btn-primary ">Create Employee</a>
 
 @if(Model.Count() > 0)
 {

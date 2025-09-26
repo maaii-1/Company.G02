@@ -18,10 +18,18 @@ namespace Company.G02.PL.Controllers
         }
 
 
-        public IActionResult Index()
+        public IActionResult Index(string? SearchInput)
         {
-            var employees = _employeeRepository.GetAll();
-
+            IEnumerable<Employee> employees;
+            if (string.IsNullOrEmpty(SearchInput))
+            {
+                 employees = _employeeRepository.GetAll();
+            }
+            else
+            {
+                 employees = _employeeRepository.GetByName(SearchInput);
+            }
+            #region Dictionary
             // Dictionary: 3 Properties
             // 1. ViewData : Transfer Extra Info From COntroller (Action) To View
 
@@ -31,7 +39,8 @@ namespace Company.G02.PL.Controllers
 
             //ViewBag.Message = "Hello From ViewBag ";
 
-            // 3. TempData :
+            // 3. TempData : 
+            #endregion
             return View(employees);
         }
 
