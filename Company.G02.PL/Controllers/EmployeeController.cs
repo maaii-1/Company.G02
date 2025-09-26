@@ -19,6 +19,17 @@ namespace Company.G02.PL.Controllers
         public IActionResult Index()
         {
             var employees = _employeeRepository.GetAll();
+
+            // Dictionary: 3 Properties
+            // 1. ViewData : Transfer Extra Info From COntroller (Action) To View
+
+            //ViewData["Message"] = "Hello From ViewData";
+
+            // 2. ViewBag  : Transfer Extra Info From COntroller (Action) To View
+
+            ViewBag.Message = "Hello From ViewBag "
+
+            // 3. TempData :
             return View(employees);
         }
 
@@ -52,6 +63,7 @@ namespace Company.G02.PL.Controllers
                 var count = _employeeRepository.Add(employee);
                 if (count > 0)
                 {
+                    TempData["Message"] = "Employee created successfully.";
                     return RedirectToAction(nameof(Index));
                 }
             }
