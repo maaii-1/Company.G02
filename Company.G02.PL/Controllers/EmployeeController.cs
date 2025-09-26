@@ -27,7 +27,7 @@ namespace Company.G02.PL.Controllers
 
             // 2. ViewBag  : Transfer Extra Info From COntroller (Action) To View
 
-            ViewBag.Message = "Hello From ViewBag "
+            //ViewBag.Message = "Hello From ViewBag ";
 
             // 3. TempData :
             return View(employees);
