@@ -1,6 +1,7 @@
 using Company.G02.BLL.Interfaces;
 using Company.G02.BLL.Repositories;
 using Company.G02.DAL.Data.Contexts;
+using Company.G02.PL.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -19,7 +20,17 @@ namespace Company.G02.PL
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-                });   // Allow DI For CompanyDbContext
+            });   // Allow DI For CompanyDbContext
+
+            // Life Time
+
+            //builder.Services.AddScoped();     // Lifetime: One Instance Per HTTP Request
+            //builder.Services.AddTransient();  // Lifetime: New Instance Every Time Requested (Per Operation)
+            //builder.Services.AddSingleton();  // Lifetime: One Instance For The Entire Application
+
+            builder.Services.AddScoped<IScopedService, ScopedService>();
+            builder.Services.AddTransient<ITransientSevrvice, TransientSevrvice>();
+            builder.Services.AddSingleton<ISingleton, Singleton>();
 
             var app = builder.Build();
 
