@@ -1,8 +1,10 @@
 using Company.G02.BLL.Interfaces;
 using Company.G02.BLL.Repositories;
 using Company.G02.DAL.Data.Contexts;
+using Company.G02.PL.Mapping;
 using Company.G02.PL.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace Company.G02.PL
@@ -21,6 +23,14 @@ namespace Company.G02.PL
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });   // Allow DI For CompanyDbContext
+
+            //builder.Services.AddAutoMapper(typeof(EmployeeProfile));
+
+            builder.Services.AddAutoMapper(M =>
+            {
+                M.AddProfile(new EmployeeProfile());
+                M.AddProfile(new DepartmentProfile());
+            });
 
             // Life Time
 

@@ -1,7 +1,10 @@
-﻿@model CreateEmployeeDto
+﻿@using Company.G02.BLL.Interfaces
+@model CreateEmployeeDto
+@inject IDepartmentRepository _departmentRepository
 
 @{
-    var Departments = new SelectList(ViewData["departments"] as IEnumerable<Department>, "Id", "Name");
+    // var Departments = new SelectList(ViewData["departments"] as IEnumerable<Department>, "Id", "Name");
+    var Departments = new SelectList(_departmentRepository.GetAll(), "Id", "Name");
 }
 <div class="my-3">
 <label asp-for="Name" class="col-form-label"></label>
