@@ -10,13 +10,15 @@ namespace Company.G02.PL.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
-        private readonly IDepartmentRepository _departmentRepository;
+        //private readonly IDepartmentRepository _departmentRepository;
         private readonly IMapper _mapper;
 
-        public EmployeeController(IEmployeeRepository employeeRepository, IDepartmentRepository departmentRepository, IMapper mapper)
+        public EmployeeController(IEmployeeRepository employeeRepository, 
+                                  //IDepartmentRepository departmentRepository, 
+                                  IMapper mapper)
         {
             _employeeRepository = employeeRepository;
-            _departmentRepository = departmentRepository;
+            //_departmentRepository = departmentRepository;
             _mapper = mapper;
         }
 
@@ -51,8 +53,8 @@ namespace Company.G02.PL.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var departments = _departmentRepository.GetAll();
-            ViewData["departments"] = departments;
+            //var departments = _departmentRepository.GetAll();
+            //ViewData["departments"] = departments;
             return View();
         }
 
@@ -107,8 +109,8 @@ namespace Company.G02.PL.Controllers
         [HttpGet]
         public IActionResult Edit(int? id)
         {
-            var departments = _departmentRepository.GetAll();
-            ViewData["departments"] = departments;
+            //var departments = _departmentRepository.GetAll();
+            //ViewData["departments"] = departments;
 
             if (id is null) return BadRequest("Invalid Id");
             var employee = _employeeRepository.GetById(id.Value);
@@ -181,22 +183,20 @@ namespace Company.G02.PL.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete([FromRoute] int id, Employee employee)
         {
-            if (ModelState.IsValid)
+            if (id != employee.Id)
+                return BadRequest();
+
+            var emp = _employeeRepository.GetById(id);
+            if (emp is null)
+                return NotFound();
+
+            var count = _employeeRepository.Delete(emp);
+            if (count > 0)
             {
-                if (id == employee.Id)
-                {
-                    var count = _employeeRepository.Delete(employee);
-                    if (count > 0)
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+
+            return View(emp);
         }
 
     }

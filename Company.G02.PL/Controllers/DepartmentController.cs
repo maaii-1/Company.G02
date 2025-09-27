@@ -143,12 +143,17 @@ namespace Company.G02.PL.Controllers
         [HttpGet]
         public IActionResult Delete(int? id)
         {
+            #region ..
             //if (id is null) return BadRequest("Invalid Id");
 
             //var department = _departmentRepositry.GetById(id.Value);
             //if (department is null) return NotFound(new { StatusCode = 404, message = $"Department With Id: {id} Is Not Found!" });
 
-            return Details(id,"Delete");
+            //return View(department); 
+            #endregion
+
+            return Details(id, "Delete");
+
         }
 
 
@@ -156,21 +161,18 @@ namespace Company.G02.PL.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete([FromRoute] int id, Department department)
         {
-            if (ModelState.IsValid)
+            //if (id != department.Id)
+            //    return BadRequest();
+            var dept = _departmentRepositry.GetById(id);
+            if (dept is null)
+                return NotFound(new { StatusCode = 404, Message = $"Department with ID {id} was not found." });
+
+            var count = _departmentRepositry.Delete(dept);
+            if (count > 0)
             {
-                if (id == department.Id)
-                {
-                    var count = _departmentRepositry.Delete(department);
-                    if (count > 0)
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                return RedirectToAction(nameof(Index));
             }
+
             return View(department);
         }
 
