@@ -10,7 +10,7 @@
 
             //var folderPath = Directory.GetCurrentDirectory()+ "\\wwwroot\\files\\images\\" + folderName;
 
-            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "\\wwwroot\\files", folderName);
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\files", folderName);
 
             // 2. File Name (Unique File Name)
 
@@ -30,7 +30,7 @@
 
         public static void DeleteFile(string fileName, string folderName) 
         {
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "\\wwwroot\\files", folderName, fileName);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\files", folderName, fileName);
             if(File.Exists(filePath))
             {
                 File.Delete(filePath);

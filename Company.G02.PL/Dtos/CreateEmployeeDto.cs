@@ -33,5 +33,8 @@ namespace Company.G02.PL.Dtos
         public DateTime CreateAt { get; set; }
         [DisplayName("Department")]
         public int? WorkForId { get; set; }
+
+        public string? ImageName { get; set; }
+        public IFormFile? Image { get; set; }
     }
 }

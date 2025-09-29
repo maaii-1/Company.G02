@@ -3,6 +3,7 @@ using Company.G02.BLL.Interfaces;
 using Company.G02.BLL.Repositories;
 using Company.G02.DAL.Models;
 using Company.G02.PL.Dtos;
+using Company.G02.PL.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.G02.PL.Controllers
@@ -85,12 +86,18 @@ namespace Company.G02.PL.Controllers
                 //}; 
                 #endregion
 
+                if (emp.Image is not null)
+                {
+                    emp.ImageName = DocumentSettings.UploadFile(emp.Image, "images");
+                }
+
                 var employee = _mapper.Map<Employee>(emp);
 
                 _unitOfWork.EmployeeRepository.Add(employee);
                 var count = _unitOfWork.Complete();
                 if (count > 0)
                 {
+
                     TempData["Message"] = "Employee created successfully.";
                     return RedirectToAction(nameof(Index));
                 }
