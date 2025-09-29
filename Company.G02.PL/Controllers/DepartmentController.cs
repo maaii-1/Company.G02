@@ -10,19 +10,24 @@ namespace Company.G02.PL.Controllers
 {
     public class DepartmentController : Controller
     {
-        private readonly IDepartmentRepository _departmentRepositry;
+        private readonly IUnitOfWork _unitOfWork;
+
+        //private readonly IDepartmentRepository _departmentRepositry;
         private readonly IMapper _mapper;
 
         // Ask CLR Create Object From DepartmentRepositry
-        public DepartmentController(IDepartmentRepository departmentRepositry, IMapper mapper)
+        public DepartmentController(/*IDepartmentRepository departmentRepositry*/
+                                      IUnitOfWork unitOfWork, 
+                                      IMapper mapper)
         {
-            _departmentRepositry = departmentRepositry;
+            //_departmentRepositry = departmentRepositry;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
         [HttpGet] // GET: /Department/Index
         public IActionResult Index()
         { 
-            var departments = _departmentRepositry.GetAll();
+            var departments = _unitOfWork.DepartmentRepository.GetAll();
             return View(departments);
         }
         [HttpGet]
@@ -36,15 +41,11 @@ namespace Company.G02.PL.Controllers
         {
             if(ModelState.IsValid)   // Server Side Validation
             {
-                //var department = new Department()
-                //{
-                //    Code = model.Code,
-                //    Name = model.Name,
-                //    CreateAt = model.CreateAt
-                //};
+
                 var department = _mapper.Map<Department>(model);
 
-                var count = _departmentRepositry.Add(department);
+                 _unitOfWork.DepartmentRepository.Add(department);
+                var count = _unitOfWork.Complete();
                 if(count > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -60,7 +61,7 @@ namespace Company.G02.PL.Controllers
         {
             if (id is null) return BadRequest("Invalid Id");
 
-            var department = _departmentRepositry.GetById(id.Value);
+            var department = _unitOfWork.DepartmentRepository.GetById(id.Value);
             if (department is null) return NotFound(new { StatusCode = 404, message = $"Department With Id: {id} Is Not Found!" });
             
             return View(viewName, department);
@@ -71,15 +72,17 @@ namespace Company.G02.PL.Controllers
         {
             if (id is null) return BadRequest("Invalid Id");
 
-            var department = _departmentRepositry.GetById(id.Value);
+            var department = _unitOfWork.DepartmentRepository.GetById(id.Value);
             if (department is null) return NotFound(new { StatusCode = 404, message = $"Department With Id: {id} Is Not Found!" });
 
+            #region MM
             //var DeotDto = new CreateDepartmentDto()
             //{
             //    Code = department.Code,
             //    Name = department.Name,
             //    CreateAt = department.CreateAt
-            //};
+            //}; 
+            #endregion
 
             var DeptDto = _mapper.Map<CreateDepartmentDto>(department);
 
@@ -105,7 +108,8 @@ namespace Company.G02.PL.Controllers
                 var department = _mapper.Map<Department>(dept);
                 department.Id = id;
 
-                var count = _departmentRepositry.Update(department);
+                 _unitOfWork.DepartmentRepository.Update(department);
+                var count = _unitOfWork.Complete();
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -163,11 +167,12 @@ namespace Company.G02.PL.Controllers
         {
             //if (id != department.Id)
             //    return BadRequest();
-            var dept = _departmentRepositry.GetById(id);
+            var dept = _unitOfWork.DepartmentRepository.GetById(id);
             if (dept is null)
                 return NotFound(new { StatusCode = 404, Message = $"Department with ID {id} was not found." });
 
-            var count = _departmentRepositry.Delete(dept);
+            _unitOfWork.DepartmentRepository.Delete(dept);
+            var count = _unitOfWork.Complete();
             if (count > 0)
             {
                 return RedirectToAction(nameof(Index));

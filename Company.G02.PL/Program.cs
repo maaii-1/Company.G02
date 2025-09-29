@@ -1,3 +1,4 @@
+using Company.G02.BLL;
 using Company.G02.BLL.Interfaces;
 using Company.G02.BLL.Repositories;
 using Company.G02.DAL.Data.Contexts;
@@ -31,6 +32,7 @@ namespace Company.G02.PL
                 M.AddProfile(new EmployeeProfile());
                 M.AddProfile(new DepartmentProfile());
             });
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // Life Time
 
