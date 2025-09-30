@@ -155,6 +155,15 @@ namespace Company.G02.PL.Controllers
         {
             if (ModelState.IsValid)
             {
+                if(empDto.ImageName is not null && empDto.Image is not null)
+                {
+                    DocumentSettings.DeleteFile(empDto.ImageName, "images");
+                }
+                if (empDto.Image is not null)
+                {
+                    empDto.ImageName = DocumentSettings.UploadFile(empDto.Image, "images");
+                }
+
                 #region MM
                 //var employee = new Employee()
                 //{
@@ -207,6 +216,10 @@ namespace Company.G02.PL.Controllers
             var count = _unitOfWork.Complete();
             if (count > 0)
             {
+                if (employee.ImageName is not null)
+                {
+                    DocumentSettings.DeleteFile(employee.ImageName, "images");
+                }
                 return RedirectToAction(nameof(Index));
             }
 
