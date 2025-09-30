@@ -10,7 +10,7 @@ namespace Company.G02.BLL.Interfaces
     public interface IEmployeeRepository : IGenericRepository<Employee>
     {
 
-        public List<Employee> GetByName(string name);
+        public Task<List<Employee>> GetByNameAsync(string name);
 
         #region .
         //IEnumerable<Employee> GetAll();
