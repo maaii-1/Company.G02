@@ -2,8 +2,10 @@ using Company.G02.BLL;
 using Company.G02.BLL.Interfaces;
 using Company.G02.BLL.Repositories;
 using Company.G02.DAL.Data.Contexts;
+using Company.G02.DAL.Models;
 using Company.G02.PL.Mapping;
 using Company.G02.PL.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -43,6 +45,9 @@ namespace Company.G02.PL
             builder.Services.AddScoped<IScopedService, ScopedService>();
             builder.Services.AddTransient<ITransientSevrvice, TransientSevrvice>();
             builder.Services.AddSingleton<ISingleton, Singleton>();
+
+            builder.Services.AddIdentity<AppUSer, IdentityRole>()
+                            .AddEntityFrameworkStores<CompanyDbContext>();
 
             var app = builder.Build();
 
