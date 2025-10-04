@@ -9,10 +9,12 @@ namespace Company.G02.PL.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<AppUSer> _userManager;
+        private readonly SignInManager<AppUSer> _signInManager;
 
-        public AccountController(UserManager<AppUSer> userManager)
+        public AccountController(UserManager<AppUSer> userManager, SignInManager<AppUSer> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         #region SignUp
@@ -88,8 +90,11 @@ namespace Company.G02.PL.Controllers
                     var flag = await _userManager.CheckPasswordAsync(user, model.Password);
                     if (flag)
                     {
-
-                        return RedirectToAction(nameof(HomeController.Index), "Home");
+                        var result =  await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+                        if(result.Succeeded)
+                        {
+                            return RedirectToAction(nameof(HomeController.Index), "Home");
+                        }
                     }
                 }
                 ModelState.AddModelError("", "Invalid Email Or Password!");
@@ -99,6 +104,18 @@ namespace Company.G02.PL.Controllers
             return View();
         }
 
+
+        #endregion
+
+        #region SignOut
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SignOut()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction(nameof(SignIn)); // Redirect back to login page
+        }
 
         #endregion
     }
