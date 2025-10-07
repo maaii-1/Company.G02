@@ -1,5 +1,6 @@
 ﻿using Company.G02.DAL.Models;
 using Company.G02.PL.Dtos;
+using Company.G02.PL.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -118,5 +119,75 @@ namespace Company.G02.PL.Controllers
         }
 
         #endregion
+
+        #region Forget Password
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendResetPasswordUrl(ForgotPasswordDto model)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user is not null)
+                {
+
+                    // Generate Token
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                    // Create URL
+                    var url = Url.Action("ResetPassword", "Account", new { email = model.Email, token }, Request.Scheme);
+
+
+                    // Create Email
+
+                    var emailBody = $@"
+                                    <p>Dear {user.UserName},</p>
+                                    <p>We received a request to reset your password for your account associated with this email address.</p>
+                                    <p>To reset your password, please click the link below:</p>
+                                    <p>
+                                        <a href='{url}' style='display:inline-block;padding:10px 15px;
+                                        background-color:#007bff;color:#fff;text-decoration:none;
+                                        border-radius:5px;'>Reset Password</a>
+                                    </p>
+                                    <p>If you did not request this, you can safely ignore this email. 
+                                    Your password will remain unchanged.</p>
+                                    <p>Thank you,<br/>Support Team</p>";
+
+                    var email = new Email()
+                    {
+                        To = model.Email,
+                        Subject = "Reset Password Request",
+                        Body = emailBody
+                    };
+
+                    var flag = EmailSetting.SendEmail(email);
+                    if (flag)
+                    {
+                        return RedirectToAction("CheckYourInbox");
+                    }
+                }
+
+            }
+            ModelState.AddModelError("", "Invalid Reset Password");
+
+            return View("ForgotPassword", model);
+        }
+
+        [HttpGet]
+        public IActionResult CheckYourInbox()
+        {
+            return View();
+        }
+
+        #endregion
+
+
     }
 }
