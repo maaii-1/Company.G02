@@ -47,7 +47,8 @@ namespace Company.G02.PL
             builder.Services.AddSingleton<ISingleton, Singleton>();
 
             builder.Services.AddIdentity<AppUSer, IdentityRole>()
-                            .AddEntityFrameworkStores<CompanyDbContext>();
+                            .AddEntityFrameworkStores<CompanyDbContext>()
+                            .AddDefaultTokenProviders();
 
             builder.Services.ConfigureApplicationCookie(config => 
             {
