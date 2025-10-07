@@ -1,13 +1,13 @@
-﻿@model UserToReturnDto
+﻿@model RoleToReturnDto
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit User Information</h1>
+<h1>Edit Role Information</h1>
 
 <form asp-action="Edit" enctype="multipart/form-data">
     <div class="my-3">
-        <partial name="UserPartialView/_CreateEditPartialView" />
+        <partial name="RolePartialView/_CreateEditPartialView" />
       
         <input type="submit" value="Save" class="btn btn-warning" />
         <a asp-action="Index" class="btn btn-light">Back To List</a>
