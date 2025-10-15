@@ -68,6 +68,7 @@ namespace Company.G02.PL.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CreateEmployeeDto emp)
         {
             if (ModelState.IsValid)  
@@ -153,6 +154,7 @@ namespace Company.G02.PL.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromRoute] int id, CreateEmployeeDto empDto)
         {
@@ -205,6 +207,7 @@ namespace Company.G02.PL.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete([FromRoute] int id, Employee employee)
         {
