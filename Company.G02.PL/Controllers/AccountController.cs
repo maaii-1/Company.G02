@@ -231,5 +231,10 @@ namespace Company.G02.PL.Controllers
         #endregion
 
 
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
     }
 }

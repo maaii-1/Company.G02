@@ -53,6 +53,10 @@ namespace Company.G02.PL
             builder.Services.ConfigureApplicationCookie(config => 
             {
                 config.LoginPath = "/Account/SignIn";
+                config.AccessDeniedPath = "/Account/AccessDenied";
+                config.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                config.SlidingExpiration = true;
+
             });
 
             var app = builder.Build();

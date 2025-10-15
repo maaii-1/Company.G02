@@ -40,6 +40,7 @@ namespace Company.G02.PL.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CreateDepartmentDto model)
         {
             if(ModelState.IsValid)   // Server Side Validation
@@ -94,6 +95,7 @@ namespace Company.G02.PL.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromRoute] int id, CreateDepartmentDto dept)
         {
@@ -165,6 +167,7 @@ namespace Company.G02.PL.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete([FromRoute] int id, Department department)
         {
