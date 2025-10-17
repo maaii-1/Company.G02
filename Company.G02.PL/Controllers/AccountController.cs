@@ -1,10 +1,15 @@
 ﻿using Company.G02.DAL.Models;
 using Company.G02.PL.Dtos;
 using Company.G02.PL.Helpers;
+using Company.G02.PL.Helpers.Interface;
+using Humanizer;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace Company.G02.PL.Controllers
@@ -13,11 +18,13 @@ namespace Company.G02.PL.Controllers
     {
         private readonly UserManager<AppUSer> _userManager;
         private readonly SignInManager<AppUSer> _signInManager;
+        private readonly ITwilioService _twilioService;
 
-        public AccountController(UserManager<AppUSer> userManager, SignInManager<AppUSer> signInManager)
+        public AccountController(UserManager<AppUSer> userManager, SignInManager<AppUSer> signInManager, ITwilioService twilioService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _twilioService = twilioService;
         }
 
         #region SignUp
@@ -120,16 +127,101 @@ namespace Company.G02.PL.Controllers
 
         public async Task<IActionResult> GoogleResponse()
         {
-            var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
-            var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(claim => new
+            try
             {
-                claim.Issuer,
-                claim.OriginalIssuer,
-                claim.Type,
-                claim.Value
-            });
-            return RedirectToAction("Index", "Home");
+                var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+                if (!result.Succeeded)
+                    return RedirectToAction("SignIn");
+
+
+                var debugClaims = result.Principal.Identities.FirstOrDefault().Claims.Select(c => new
+                {
+                    c.Issuer,
+                    c.OriginalIssuer,
+                    c.Type,
+                    c.Value
+                });
+
+
+                var claims = result.Principal.Identities.FirstOrDefault()?.Claims;
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                await HttpContext.SignInAsync
+                   (
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity)
+                   );
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Google login failed. Please try again.";
+                return RedirectToAction("SignIn");
+            }
         }
+
+        #region insert into user table
+        //public async Task<IActionResult> GoogleResponse()
+        //{
+        //    try
+        //    {
+        //        var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+        //        if (!result.Succeeded)
+        //            return RedirectToAction("SignIn");
+
+        //        var claims = result.Principal.Identities.FirstOrDefault()?.Claims;
+
+        //        var email = claims.FirstOrDefault(c => c.Type == "email")?.Value;
+        //        var name = claims.FirstOrDefault(c => c.Type == "name")?.Value;
+        //        if (email == null)
+        //            return RedirectToAction("SignIn");
+
+        //        var firstName = name?.Split(' ').FirstOrDefault() ?? "";
+        //        var lastName = name?.Split(' ').Skip(1).FirstOrDefault() ?? "";
+
+        //        var user = await _userManager.FindByEmailAsync(email);
+        //        if (user == null)
+        //        {
+        //            // Create new AppUser
+        //            user = new AppUSer
+        //            {
+        //                UserName = email,
+        //                Email = email,
+        //                FirstName = firstName,
+        //                LastName = lastName,
+        //                IsAgree = true // optional default
+        //            };
+        //            var createResult = await _userManager.CreateAsync(user);
+        //            if (!createResult.Succeeded)
+        //                return RedirectToAction("SignIn");
+        //        }
+
+        //        // Sign in user
+        //        await _signInManager.SignInAsync(user, isPersistent: true);
+
+        //        // Map to DTO for table display
+        //        var roles = await _userManager.GetRolesAsync(user);
+        //        var userDto = new UserToReturnDto
+        //        {
+        //            Id = user.Id,
+        //            UserName = user.UserName,
+        //            FirstName = user.FirstName,
+        //            LastName = user.LastName,
+        //            Email = user.Email,
+        //            Roles = roles
+        //        };
+
+        //        return RedirectToAction("Index", "Home");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TempData["Error"] = "Google login failed. Please try again.";
+        //        return RedirectToAction("SignIn");
+        //    }
+        //} 
+        #endregion
 
 
         #endregion
@@ -254,6 +346,56 @@ namespace Company.G02.PL.Controllers
         }
 
 
+        #endregion
+
+        #region Twilio Forget Password
+        [HttpPost]
+        public async Task<IActionResult> SentResetPasswordSms(ForgotPasswordDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user is not null)
+                {
+                    var resetPasswordToken = _userManager.GeneratePasswordResetTokenAsync(user);
+                    var PasswordUrl = Url.Action("ResetPassword", "Account", new { email = model.Email, resetPasswordToken }, Request.Scheme);
+
+                    // Create Sms
+
+                    var SmsBody = $@"
+                                    <p>Dear {user.UserName},</p>
+                                    <p>We received a request to reset your password for your account associated with this email address.</p>
+                                    <p>To reset your password, please click the link below:</p>
+                                    <p>
+                                        <a href='{PasswordUrl}' style='display:inline-block;padding:10px 15px;
+                                        background-color:#007bff;color:#fff;text-decoration:none;
+                                        border-radius:5px;'>Reset Password</a>
+                                    </p>
+                                    <p>If you did not request this, you can safely ignore this Message. 
+                                    Your password will remain unchanged.</p>
+                                    <p>Thank you,<br/>Support Team</p>";
+
+                    var sms = new Sms()
+                    {
+                        To = user.PhoneNumber,
+                        Body = SmsBody
+                    };
+
+                    _twilioService.SendSms(sms);
+                    return Redirect(nameof(CheckYourPhone));
+
+                }
+                ModelState.AddModelError(string.Empty, "There Is No Account With This Phone Number :(.");
+            }
+            return View(model);
+
+        }
+
+        [HttpGet]
+        public IActionResult CheckYourPhone()
+        {
+            return View();
+        } 
         #endregion
 
         #region Access Denied

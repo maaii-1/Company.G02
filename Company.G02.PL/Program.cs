@@ -3,8 +3,11 @@ using Company.G02.BLL.Interfaces;
 using Company.G02.BLL.Repositories;
 using Company.G02.DAL.Data.Contexts;
 using Company.G02.DAL.Models;
+using Company.G02.PL.Helpers;
+using Company.G02.PL.Helpers.Interface;
 using Company.G02.PL.Mapping;
 using Company.G02.PL.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -60,15 +63,31 @@ namespace Company.G02.PL
 
             });
 
+
+            builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection(nameof(TwilioSettings)));
+            builder.Services.AddScoped<ITwilioService , TwilioService>();
+
+
             builder.Services.AddAuthentication(config => 
             { 
-                config.DefaultAuthenticateScheme = GoogleDefaults.AuthenticationScheme;
+                config.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                config.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 config.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
             
-            }).AddGoogle(G =>
+            })  .AddCookie()
+                .AddGoogle(G =>
             {
                 G.ClientId = builder.Configuration["Authentication:Google:ClientId"];
                 G.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+                G.CallbackPath = "/signin-google";
+
+                // Handle remote failures (access denied, network errors, etc.)
+                G.Events.OnRemoteFailure = context =>
+                {
+                    context.Response.Redirect("/Account/SignIn");
+                    context.HandleResponse(); 
+                    return Task.CompletedTask;
+                };
             });
 
             var app = builder.Build();

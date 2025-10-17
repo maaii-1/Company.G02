@@ -20,6 +20,13 @@
 			<input type="submit" value="SIGNIN">
 			<p><<a asp-action="ForgotPassword">Forgotten Password?</a></p>
 		</form>
+
+		<form asp-action="GoogleLogin" method="post">
+			<button type="submit" class="btn btn-danger w-100">
+				<i class="fa fa-google me-2"></i> Sign in with Google
+			</button>
+		</form>
+
 		<div>Don't have an Account? <a asp-action="SignUp"> Signup Now!</a></div>
 	</div>
 </div>
