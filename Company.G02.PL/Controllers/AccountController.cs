@@ -1,6 +1,8 @@
 ﻿using Company.G02.DAL.Models;
 using Company.G02.PL.Dtos;
 using Company.G02.PL.Helpers;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -103,6 +105,30 @@ namespace Company.G02.PL.Controllers
             }
             
             return View();
+        }
+
+
+        public IActionResult GoogleLogin()
+        {
+            var prop = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("GoogleResponse")
+            };
+            return Challenge(prop, GoogleDefaults.AuthenticationScheme);
+        }
+
+
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+            var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(claim => new
+            {
+                claim.Issuer,
+                claim.OriginalIssuer,
+                claim.Type,
+                claim.Value
+            });
+            return RedirectToAction("Index", "Home");
         }
 
 
@@ -230,11 +256,14 @@ namespace Company.G02.PL.Controllers
 
         #endregion
 
-
+        #region Access Denied
         public IActionResult AccessDenied()
         {
             return View();
-        }
+        } 
+        #endregion
+
+
 
     }
 }
