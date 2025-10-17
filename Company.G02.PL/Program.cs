@@ -70,8 +70,8 @@ namespace Company.G02.PL
 
             builder.Services.AddAuthentication(config => 
             { 
-                config.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                config.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                config.DefaultAuthenticateScheme = GoogleDefaults.AuthenticationScheme;
+                //config.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 config.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
             
             })  .AddCookie()
