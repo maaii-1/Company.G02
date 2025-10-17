@@ -5,6 +5,7 @@ using Company.G02.DAL.Data.Contexts;
 using Company.G02.DAL.Models;
 using Company.G02.PL.Mapping;
 using Company.G02.PL.Services;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,6 +58,17 @@ namespace Company.G02.PL
                 config.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                 config.SlidingExpiration = true;
 
+            });
+
+            builder.Services.AddAuthentication(config => 
+            { 
+                config.DefaultAuthenticateScheme = GoogleDefaults.AuthenticationScheme;
+                config.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            
+            }).AddGoogle(G =>
+            {
+                G.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                G.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
             });
 
             var app = builder.Build();
