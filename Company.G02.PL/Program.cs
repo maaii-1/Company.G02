@@ -74,8 +74,7 @@ namespace Company.G02.PL
                 //config.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 config.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
             
-            })  .AddCookie()
-                .AddGoogle(G =>
+            }).AddGoogle(G =>
             {
                 G.ClientId = builder.Configuration["Authentication:Google:ClientId"];
                 G.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
