@@ -142,18 +142,19 @@ namespace Company.G02.PL.Controllers
                     c.Value
                 });
 
+                return RedirectToAction(nameof(HomeController.Index), "Home");
 
-                var claims = result.Principal.Identities.FirstOrDefault()?.Claims;
+                //var claims = result.Principal.Identities.FirstOrDefault()?.Claims;
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                //var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                await HttpContext.SignInAsync
-                   (
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity)
-                   );
+                //await HttpContext.SignInAsync
+                //   (
+                //    CookieAuthenticationDefaults.AuthenticationScheme,
+                //    new ClaimsPrincipal(claimsIdentity)
+                //   );
 
-                return RedirectToAction("Index", "Home");
+                //return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
